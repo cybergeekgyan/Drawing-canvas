@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DRAWING APP USING HTML</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<style>
+#myCan {
+border: 1px solid black;
+}
+#drawhere {
+width: 300px;
+}
+</style>
+</head>
+<body>
+<canvas id="myCan" width="800" height="400"></canvas>
+<div id="drawhere">
+<div id="xsave" class="btn btn-primary">Save</div>
+<div id="xclear" class="btn btn-danger">Clear</div>
+<label for="pen-color">Choose a color</label>
+<input id="pen-color" type="color" />
+<label for="pen-width">Choose a stroke width</label>
+<input id="pen-width" type="range" min="1" max="20" />
+</div>
+<img id="canvasout" style="display:none;">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+var canvas = document.getElementById('myCan');
+var ctx = canvas.getContext('2d');
+var w = canvas.width;
+var h = canvas.height;
+var mouse = {
+x: 0,
+y: 0
+};
+var last_mouse = {
+x: 0,
+y: 0
+};
+var outputcanvas = document.getElementById('canvasout');
+var pencol = document.getElementById('pen-color');
+var penwid = document.getElementById('pen-width');
+var drawup = false;
+var drawcolor = 'black';
+var drawwidth = penwid.value;
+pencol.addEventListener('change', fcolor);
+penwid.addEventListener('change', fwidth);
+document.getElementById('xsave').addEventListener("click", fsave);
+document.getElementById('xclear').addEventListener("click", fclear);
+canvas.addEventListener('mousemove', function (e) {
+last_mouse.x = mouse.x;
+last_mouse.y = mouse.y;
+mouse.x = e.pageX - this.offsetLeft;
+mouse.y = e.pageY - this.offsetTop;
+draw('move');
+}, false);
+canvas.addEventListener('mousedown', function (e) {
+draw('down');
+}, false);
+canvas.addEventListener('mouseup', function (e) {
+draw('up');
+}, false);
+canvas.addEventListener('mouseout', function (e) {
+draw('up');
+}, false);
+function draw(a) {
+if (a == 'down') {
+drawup = true;
+}
+if (a == 'up') {
+drawup = false;
+}
+if (drawup) {
+ctx.beginPath();
+ctx.moveTo(last_mouse.x, last_mouse.y);
+ctx.lineTo(mouse.x, mouse.y);
+ctx.strokeStyle = drawcolor;
+ctx.lineWidth = drawwidth;
+ctx.stroke();
+ctx.closePath();
+}
+}
+function fcolor() {
+drawcolor = pencol.value;
+}
+function fwidth() {
+drawwidth = penwid.value;
+}
+function fsave() {
+var dataURL = canvas.toDataURL();
+outputcanvas.src = dataURL;
+outputcanvas.style.display = 'inline';
+//AJAX to Server base64 data to the server
+$.ajax({
+type:"POST",
+url: "save.php",
+dataType: "text",
+data: { basedata : dataURL },
+success: function (result){
+}
+});
+}
+function fclear() {
+var cfirm = confirm("clear canvas?");
+if (cfirm) {
+ctx.clearRect(0, 0, w, h);
+outputcanvas.style.display = 'none';
+}
+}
+</script>
+</body>
+</html>
