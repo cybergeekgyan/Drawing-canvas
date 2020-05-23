@@ -3,4 +3,4 @@ Online Canvas for your project or artwork
 Enjoy!
 Happy Drawing :)
 
-Using HTML,CSS,JQUERY
+Using HTML,CSS,JAVASCRIPT
