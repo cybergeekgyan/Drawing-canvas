@@ -1,4 +1,4 @@
-# Drawing-Canvas
+# Drawing-Canvas-Scribble-Pad-for-designers-and-painters
 Online Canvas for your project or artwork
 Enjoy!
 Happy Drawing :)
